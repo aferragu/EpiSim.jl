@@ -1,3 +1,5 @@
+#estimation code
+
 using DSP
 
 function epi_estim_R(incidence; window::Integer=7, si_distr::Function=si_covid, T::Integer=30, a0::Real=1, b0::Real=5)
