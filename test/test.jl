@@ -27,11 +27,7 @@ reps = 10000
 
 median,lower,upper = calculo_prediccion(Rfuturos,incidence_0,dias,reps, si_covid);
 
-pop = 3505984
-verde = 1*pop/100000
-amarillo=10*pop/100000
-naranja=25*pop/100000
-rojo = 45*pop/100000
+verde, amarillo, naranja, rojo = compute_harvard_levels(3505984)
 
 p=plot(legend=:topleft)
 bar!(p,fechauy[fechauy.>=start],Iuy[fechauy.>=start], alpha=0.6, label="Incidencia observada UY", xticks = start:Dates.Day(2):Date(2020,12,31))
@@ -45,5 +41,3 @@ plot!(fechas, ones(size(fechas))*rojo, fillrange=naranja, color=:red, fillalpha=
 plot!(p,(startdate+Dates.Day(1):Dates.Day(1):startdate+Dates.Day(dias)),median, label="Proyeccion al $(startdate)", ribbon=(median-lower,upper-median),lw=2, color=:green, fillalpha=0.2)
 plot!(p,title="Incidencia observada y proyección - Todo el país")
 plot!(xformatter = x -> Dates.format(Date(Dates.UTD(x)), "dd/mm"))
-
-scatter!([Dates.today()],[400])

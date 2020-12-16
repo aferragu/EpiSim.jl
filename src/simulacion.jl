@@ -5,7 +5,7 @@ function simula_Epiestim(R::Vector{<:Real},incidence_0::Vector{<:Number},dias::I
 
     periodo=length(R)
 
-    pesos = si_distr.((1:T))
+    pesos = si_distr.(1:T)
     h = length(pesos)
 
     m=length(incidence_0)
