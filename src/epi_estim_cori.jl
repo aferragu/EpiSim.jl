@@ -12,7 +12,7 @@ function epi_estim_R(incidence; window::Integer=7, si_distr::Function=si_covid, 
 
     n=length(incidence)
 
-    a = a0 .+ filt(ones(window), incidence)
+    a = a0 .+ filt(ones(window),[1.0], incidence)
     b = 1.0./(1/b0 .+ filt(ones(window),[1.0], Lambda))
     R = a.*b
 
