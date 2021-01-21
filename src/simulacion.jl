@@ -1,7 +1,7 @@
 #simulation code
 using Distributions
 
-function simula_Epiestim(R::Vector{<:Real},incidence_0::Vector{<:Number},dias::Integer, si_distr::Function; T=30)
+function simulate(R::Vector{<:Real},incidence_0::Vector{<:Number},dias::Integer, si_distr::Function; T=30)
 
     periodo=length(R)
 
@@ -24,25 +24,46 @@ function simula_Epiestim(R::Vector{<:Real},incidence_0::Vector{<:Number},dias::I
     return incidence
 end
 
-function calculo_prediccion(R::Vector{<:Real},incidence_0::Vector{<:Real},dias::Integer,reps::Integer, si_distr::Function; T=30)
+function compute_active(incidence::Array{<:Real}, activos_iniciales::Array{<:Real}, periodo_actividad::Integer)
+
+    activos = sum(incidence[i:-1:max(i-periodo_actividad+1,1)])
+    return activos
+
+end
+
+function compute_prediction(R::Vector{<:Real},incidence_0::Vector{<:Real},dias::Integer,reps::Integer, si_distr::Function; T=30)
 
     incidencias = zeros(reps, dias)
+    activos = zeros(reps, dias)
 
     for j=1:reps
-        incidencia = simula_Epiestim(R,incidence_0,dias, si_distr; T=T)
+        incidencia = simulate(R,incidence_0,dias, si_distr; T=T)
         incidencias[j,:] = incidencia[end-dias+1:end]
+
+        activo = compute_active(incidencia, [0.0], 12)
+        activos[j,:] = activo[end-dias+1:end]
+
     end
 
-    median = zeros(dias)
-    lower = zeros(dias)
-    upper = zeros(dias)
+    medianI = zeros(dias)
+    lowerI = zeros(dias)
+    upperI = zeros(dias)
+
+    medianA = zeros(dias)
+    lowerA = zeros(dias)
+    upperA = zeros(dias)
 
     for i=1:dias
-        median[i] = quantile(incidencias[:,i],0.5)
-        lower[i] = quantile(incidencias[:,i],0.025)
-        upper[i] = quantile(incidencias[:,i],0.975)
+        medianI[i] = quantile(incidencias[:,i],0.5)
+        lowerI[i] = quantile(incidencias[:,i],0.025)
+        upperI[i] = quantile(incidencias[:,i],0.975)
+
+        medianA[i] = quantile(activos[:,i],0.5)
+        lowerA[i] = quantile(activos[:,i],0.025)
+        upperA[i] = quantile(activos[:,i],0.975)
+
     end
 
-    return median,lower,upper
+    return medianI,lowerI,upperI, medianA, lowerA, upperA
 
 end
