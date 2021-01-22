@@ -26,7 +26,7 @@ end
 
 function compute_active(incidence::Array{<:Real}, activos_iniciales::Array{<:Real}, periodo_actividad::Integer)
 
-    activos = sum(incidence[i:-1:max(i-periodo_actividad+1,1)])
+    activos = [sum(incidence[i:-1:max(i-periodo_actividad+1,1)]) for i=1:length(incidence)]
     return activos
 
 end

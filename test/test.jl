@@ -1,4 +1,4 @@
-using Plots, CSV, HTTP, JSON, Dates, DataFrames, LaTeXStrings, EpiSim
+using Plots, CSV, HTTP, Dates, DataFrames, LaTeXStrings, EpiSim
 default(size=(1000,500))
 #GUIAD
 req = HTTP.get("https://raw.githubusercontent.com/GUIAD-COVID/datos-y-visualizaciones-GUIAD/master/datos/estadisticasUY.csv")
@@ -25,7 +25,7 @@ Rfuturos = R0[end-ventana+1:end]
 dias = 30
 reps = 10000
 
-median,lower,upper = calculo_prediccion(Rfuturos,incidence_0,dias,reps, si_covid);
+median,lower,upper = compute_prediction(Rfuturos,incidence_0,dias,reps, si_covid);
 
 verde, amarillo, naranja, rojo = compute_harvard_levels(3505984)
 
