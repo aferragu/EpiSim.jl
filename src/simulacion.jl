@@ -67,3 +67,26 @@ function compute_prediction(R::Vector{<:Real},incidence_0::Vector{<:Real},dias::
     return medianI,lowerI,upperI, medianA, lowerA, upperA
 
 end
+
+function simulate_mortality(incidence::Vector{<:Number}, mortality_weights::Vector{<:Number})
+
+    dias = length(incidence)
+
+    mortality_dist = DiscreteNonParametric((0:length(mortality_weights)-1),mortality_weights/sum(mortality_weights))
+
+    mortality = zeros(dias)
+
+    for i=1:dias
+
+        m = rand(mortality_dist,incidence[i])
+
+        for j=1:length(m)
+            if i+m[j]<=dias
+                mortality[i+m[j]] = mortality[i+m[j]]+1
+            end
+        end
+    end
+
+    return mortality
+
+end
