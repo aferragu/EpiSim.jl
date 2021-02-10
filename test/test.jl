@@ -16,7 +16,7 @@ cti_uy=collect(skipmissing(cti_uy));
 
 ventana=7
 start = Date(2020,11,15)
-startdate = Date(2020,12,1)
+startdate = Date(2021,1,15)
 incidence_0 = Iuy[fechauy.<=startdate]
 #filtro una pasada mas del R
 R0,Rl,Ru,a0,b0, Lambda = epi_estim_R(incidence_0)

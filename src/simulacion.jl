@@ -68,7 +68,7 @@ function compute_prediction(R::Vector{<:Real},incidence_0::Vector{<:Real},dias::
 
 end
 
-function simulate_mortality(incidence::Vector{<:Number}, mortality_weights::Vector{<:Number})
+function simulate_mortality(incidence::Vector{<:Number}, death_prob::Real, mortality_weights::Vector{<:Number})
 
     dias = length(incidence)
 
@@ -78,7 +78,9 @@ function simulate_mortality(incidence::Vector{<:Number}, mortality_weights::Vect
 
     for i=1:dias
 
-        m = rand(mortality_dist,incidence[i])
+        num_deaths = rand(Binomial(incidence[i],death_prob))
+
+        m = rand(mortality_dist,num_deaths)
 
         for j=1:length(m)
             if i+m[j]<=dias
