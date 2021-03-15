@@ -1,5 +1,7 @@
-using Plots, CSV, HTTP, Dates, DataFrames, LaTeXStrings, EpiSim
+using Plots, CSV, HTTP, Dates, DataFrames, StatsBase, LaTeXStrings, EpiSim
 default(size=(1000,500))
+const UYPOP = 3505984
+
 #GUIAD
 req = HTTP.get("https://raw.githubusercontent.com/GUIAD-COVID/datos-y-visualizaciones-GUIAD/master/datos/estadisticasUY.csv")
 dataguiad = CSV.read(IOBuffer(req.body),missingstring="N/A", DataFrame)
@@ -15,19 +17,20 @@ cti_uy=collect(skipmissing(cti_uy));
 
 
 ventana=7
-start = Date(2020,11,15)
-startdate = Date(2021,1,15)
+start = Date(2021,2,1)
+startdate = Date(2021,3,8)
 incidence_0 = Iuy[fechauy.<=startdate]
 #filtro una pasada mas del R
-R0,Rl,Ru,a0,b0, Lambda = epi_estim_R(incidence_0)
+R0,Rl,Ru,a0,b0, Lambda = epi_estim_R(incidence_0, window=14)
 Rfuturos = R0[end-ventana+1:end]
+println("R efectivo: $(geomean(Rfuturos))")
 
 dias = 30
 reps = 10000
 
 median,lower,upper = compute_prediction(Rfuturos,incidence_0,dias,reps, si_covid);
 
-verde, amarillo, naranja, rojo = compute_harvard_levels(3505984)
+verde, amarillo, naranja, rojo = compute_harvard_levels(UYPOP)
 
 p=plot(legend=:topleft)
 bar!(p,fechauy[fechauy.>=start],Iuy[fechauy.>=start], alpha=0.6, label="Incidencia observada UY", xticks = start:Dates.Day(2):Date(2020,12,31))
