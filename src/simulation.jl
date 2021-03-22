@@ -35,7 +35,7 @@ function simulate_active(incidence::Array{<:Real}, activity_distribution::Vector
 
     dias = length(incidence)
 
-    activity = DiscreteNonParametric(collect(1:length(activity_distribution)),activity_distribution/sum(activity_distribution))
+    activity = DiscreteNonParametric(collect(0:length(activity_distribution)-1),activity_distribution/sum(activity_distribution))
 
     activos = zeros(dias)
 
@@ -58,7 +58,7 @@ function simulate_mortality(incidence::Vector{<:Number}, death_prob::Real, morta
 
     dias = length(incidence)
 
-    mortality_dist = DiscreteNonParametric(collect(1:length(mortality_weights)),mortality_weights/sum(mortality_weights))
+    mortality_dist = DiscreteNonParametric(collect(0:length(mortality_weights)-1),mortality_weights/sum(mortality_weights))
 
     mortality = zeros(dias)
 
@@ -83,7 +83,7 @@ function simulate_icu(incidence::Vector{<:Number}, icu_prob::Real, icu_weights::
 
     dias = length(incidence)
 
-    icu_distr = DiscreteNonParametric(collect(1:length(icu_weights)),icu_weights/sum(icu_weights))
+    icu_distr = DiscreteNonParametric(collect(0:length(icu_weights)-1),icu_weights/sum(icu_weights))
 
     icu = zeros(dias)
 
