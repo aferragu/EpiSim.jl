@@ -1,4 +1,4 @@
-using JuMP, Ipopt
+using JuMP, Gurobi
 
 function filtro(input::Vector{<:Number},weights)
     return sum(input.*weights[end:-1:1])
@@ -7,19 +7,27 @@ end
 function compute_filter_weights(input::Vector{<:Number}, output::Vector{<:Number}, filter_length::Integer)
 
     model = Model(optimizer_with_attributes(
-        Ipopt.Optimizer, "print_level" => 0)
+        Gurobi.Optimizer, "OutputFlag" => 0)
     )
 
-    @variable(model, 0<=w[1:filter_length]<=1)
-    for i=1:filter_length-1
+    @variable(model, 0<=w[1:filter_length+1]<=1)
+    for i=1:filter_length
         @constraint(model,w[i]>=w[i+1])
     end
 
-    @objective(model,Min,sum((output[filter_length+1:end] - [filtro(input[i+1:i+filter_length],w) for i=1:length(input)-filter_length]).^2))
+    @constraint(model, w[1]==1)
+    @constraint(model, w[filter_length+1]==0)
+
+    @objective(model,Min,sum((output[filter_length+1:end] - [filtro(input[i:i+filter_length],w) for i=1:length(input)-filter_length]).^2))
 
     optimize!(model)
+    println(termination_status(model))
 
-    return value.(w)
+    if termination_status(model) == MOI.OPTIMAL
+        return value.(w)
+    else
+        error("The model was not solved correctly.")
+    end
 end
 
 function compute_active_weights(incidence::Vector{<:Number}, active::Vector{<:Number}; filter_length::Integer=30)
