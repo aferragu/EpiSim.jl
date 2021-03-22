@@ -4,7 +4,7 @@ function filtro(input::Vector{<:Number},weights)
     return sum(input.*weights[end:-1:1])
 end
 
-function compute_filter_weights(input::Vector{<:Number}, output::Vector{<:Number}, zerovalue_fixed::Boolean, filter_length::Integer)
+function compute_filter_weights(input::Vector{<:Number}, output::Vector{<:Number}, zerovalue_fixed::Bool, filter_length::Integer)
 
     model = Model(optimizer_with_attributes(
         Gurobi.Optimizer, "OutputFlag" => 0)
